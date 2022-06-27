@@ -1,0 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    * {
+        font-family: 'Nunito', sans-serif;
+    }
+    html {
+        overflow-x: hidden;
+    }
+    input {
+        @apply outline-none focus:outline-none;
+    }
+    ::-webkit-search-cancel-button {
+        @apply w-3 h-3 cursor-pointer;
+        -webkit-appearance: none;
+        background: url(/x.svg) no-repeat 50% 50%;
+    }
+    .my-masonry-grid {
+        display: -webkit-box; /* Not needed if autoprefixing */
+        display: -ms-flexbox; /* Not needed if autoprefixing */
+        display: flex;
+        margin-left: -16px; /* gutter size offset */
+        width: auto;
+    }
+    .my-masonry-grid_column {
+        padding-left: 16px; /* gutter size */
+        background-clip: padding-box;
+    }
+
+    /* Style your items */
+    .my-masonry-grid_column > li {
+        /* change div to reference your elements you put in <Masonry> */
+        margin-bottom: 16px;
+    }
+}
