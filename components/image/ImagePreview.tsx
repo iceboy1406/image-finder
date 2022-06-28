@@ -1,23 +1,25 @@
+import SimpleDownloadButton from 'components/button/SimpleDownloadButton'
 import Image from 'next/image'
 import React, { FC } from 'react'
 import { FiArrowDown } from 'react-icons/fi'
-interface PreviewImageProps {
+import UserPhotoProfile from './UserPhotoProfile'
+interface ImagePreviewProps {
     src: string
     blurSrc: string
     heightPerWidth: number
     userName: string
     userImageUrl: string
     originalImageUrl: string
-    alt:string
+    alt: string
 }
-const PreviewImage: FC<PreviewImageProps> = ({
+const ImagePreview: FC<ImagePreviewProps> = ({
     src,
     blurSrc,
     heightPerWidth,
     originalImageUrl,
     userImageUrl,
     userName,
-    alt
+    alt,
 }) => {
     return (
         <li className="w-full h-fit relative inline-block group cursor-zoom-in mb-4">
@@ -32,16 +34,15 @@ const PreviewImage: FC<PreviewImageProps> = ({
                 alt={alt}
             />
             <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent to-black opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex justify-between items-end p-6">
-                <div className="flex gap-2 items-center">
-                    <Image src={userImageUrl} width={35} height={35} className='rounded-full' alt={`${userName} photo profile`} />
-                    <p className='text-white text-sm'>{userName}</p>
-                </div>
-                <a download href={originalImageUrl} className="px-3 py-3 bg-white rounded-md cursor-pointer">
-                    <FiArrowDown />
-                </a>
+                <UserPhotoProfile
+                    src={userImageUrl}
+                    userName={userName}
+                    variant={'light'}
+                />
+                <SimpleDownloadButton fileSrc={originalImageUrl} />
             </div>
         </li>
     )
 }
 
-export default PreviewImage
+export default ImagePreview

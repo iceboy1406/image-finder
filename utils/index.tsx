@@ -43,11 +43,12 @@ function getOriginalImageExtension(image: ResponseImage) {
             return 'svg'
         default:
             console.log(`invalid type : `, image)
-            // throw Error('invalid type')
+            return 'jpg'
+        // throw Error('invalid type')
     }
 }
 function getDownloadUrl(image: ResponseImage) {
-    const firstTag = image.tags.split(',')[0].trim().replace(" ", "-")
+    const firstTag = image.tags.split(',')[0].trim().replace(' ', '-')
     return {
         small: `https://pixabay.com/images/download/${firstTag}-${
             image.id
@@ -63,9 +64,50 @@ function getDownloadUrl(image: ResponseImage) {
         }.${getOriginalImageExtension(image)}?attachment`,
     }
 }
-export type { ResponseImage,ResponseData }
+function getPreviewUrl(image: ResponseImage) {
+    const firstTag = image.tags.split(',')[0].trim().replace(' ', '-')
+    return {
+        small: `https://pixabay.com/images/download/${firstTag}-${
+            image.id
+        }_640.${getCompressedImageExtension(image)}`,
+        medium: `https://pixabay.com/images/download/${firstTag}-${
+            image.id
+        }_1280.${getCompressedImageExtension(image)}`,
+        large: `https://pixabay.com/images/download/${firstTag}-${
+            image.id
+        }_1920.${getCompressedImageExtension(image)}`,
+        original: `https://pixabay.com/images/download/${firstTag}-${
+            image.id
+        }.${getOriginalImageExtension(image)}`,
+    }
+}
+const getResolutions = (originalWidth: number, originalHeight: number) => {
+    if (originalWidth > originalHeight) {
+        return {
+            small: `640x${Math.floor((originalHeight / originalWidth) * 640)}`,
+            medium: `1280x${Math.floor(
+                (originalHeight / originalWidth) * 1280
+            )}`,
+            large: `1920x${Math.floor(
+                (originalHeight / originalWidth) * 1920
+            )}`,
+            original: `${originalWidth}x${originalHeight}`,
+        }
+    }
+    return {
+        small: `${Math.floor((originalWidth / originalHeight) * 640)}x640`,
+        medium: `${Math.floor((originalWidth / originalHeight) * 1280)}x1280`,
+        large: `${Math.floor((originalWidth / originalHeight) * 1920)}x1920`,
+        original: `${originalWidth}x${originalHeight}`,
+    }
+}
+const apiBaseUrl = `https://pixabay.com/api/?key=27699215-ecac0a076f968a0144f33abee`
+export type { ResponseImage, ResponseData }
 export {
     getCompressedImageExtension,
     getDownloadUrl,
+    getPreviewUrl,
     getOriginalImageExtension,
+    apiBaseUrl,
+    getResolutions
 }

@@ -2,17 +2,18 @@ import axios from 'axios'
 import Banner from 'components/banner/Banner'
 import BannerCaption from 'components/banner/BannerCaption'
 import BannerSearchInput from 'components/banner/BannerSearchInput'
-import PreviewImage from 'components/previewImage/PreviewImage'
+import ImagePreview from 'components/image/ImagePreview'
 import type { NextPage } from 'next'
 import { useEffect } from 'react'
 import { LegacyRef, useRef } from 'react'
 import { useState } from 'react'
-import { getDownloadUrl, ResponseData, ResponseImage } from 'utils'
+import { apiBaseUrl, getDownloadUrl, ResponseData, ResponseImage } from 'utils'
 import Masonry from 'react-masonry-css'
-import {BiLoaderAlt} from 'react-icons/bi'
+import { BiLoaderAlt } from 'react-icons/bi'
+import Link from 'next/link'
 const Home: NextPage = () => {
     const [searchValue, setSearchValue] = useState<string>('')
-    const previewImageListRef: LegacyRef<HTMLDivElement> = useRef(null)
+    const imagePreviewListRef: LegacyRef<HTMLDivElement> = useRef(null)
     const [loading, setLoading] = useState<boolean>(true)
     const [images, setImages] = useState<ResponseImage[]>([])
     const [apiPage, setApiPage] = useState<number>(1)
@@ -27,11 +28,11 @@ const Home: NextPage = () => {
     useEffect(() => {
         if (loading === false) {
             if (apiPage <= maxApiPage) {
-                if (previewImageListRef.current) {
+                if (imagePreviewListRef.current) {
                     if (
                         window.scrollY + window.innerHeight >
-                        previewImageListRef.current.offsetTop +
-                            previewImageListRef.current.clientHeight -
+                        imagePreviewListRef.current.offsetTop +
+                            imagePreviewListRef.current.clientHeight -
                             300
                     ) {
                         updateImageData()
@@ -44,7 +45,7 @@ const Home: NextPage = () => {
     async function updateImageData() {
         setLoading(true)
         const response = await axios.get(
-            `https://pixabay.com/api/?key=27699215-ecac0a076f968a0144f33abee&page=${apiPage}&safesearch=true`
+            `${apiBaseUrl}&page=${apiPage}&safesearch=true`
         )
         const data: ResponseData = response.data
         setMaxApiPage(data.totalHits)
@@ -68,34 +69,43 @@ const Home: NextPage = () => {
                     }
                 />
             </Banner>
-            <div ref={previewImageListRef} className="p-4">
+            <div ref={imagePreviewListRef} className="p-4">
                 <Masonry
-                    breakpointCols={{ default: 4, 1440:3, 1024: 2, 768: 1 }}
+                    breakpointCols={{ default: 4, 1440: 3, 1024: 2, 768: 1 }}
                     className="my-masonry-grid"
                     columnClassName="my-masonry-grid_column"
                 >
                     {images.map((image) => (
-                        <PreviewImage
-                            key={image.id}
-                            src={image.webformatURL}
-                            heightPerWidth={
-                                image.imageHeight / image.imageWidth
-                            }
-                            blurSrc={image.previewURL}
-                            originalImageUrl={getDownloadUrl(image).original}
-                            userImageUrl={image.userImageURL}
-                            userName={image.user}
-                            alt={image.tags}
-                        />
+                        <Link href={`/detail/${image.id}`} key={image.id}>
+                            <div>
+                                <ImagePreview
+                                    src={image.webformatURL}
+                                    heightPerWidth={
+                                        image.imageHeight / image.imageWidth
+                                    }
+                                    blurSrc={image.previewURL}
+                                    originalImageUrl={
+                                        getDownloadUrl(image).original
+                                    }
+                                    userImageUrl={image.userImageURL}
+                                    userName={image.user}
+                                    alt={image.tags}
+                                />
+                            </div>
+                        </Link>
                     ))}
                 </Masonry>
             </div>
 
-            {loading ? <>
-            <div className="w-full p-7 flex justify-center animate-spin">
-                <BiLoaderAlt className='text-5xl text-gray-700' />
-            </div>
-            </> : ''}
+            {loading ? (
+                <>
+                    <div className="w-full p-7 flex justify-center animate-spin">
+                        <BiLoaderAlt className="text-5xl text-gray-700" />
+                    </div>
+                </>
+            ) : (
+                ''
+            )}
         </>
     )
 }
