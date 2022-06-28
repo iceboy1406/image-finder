@@ -11,6 +11,7 @@ import { apiBaseUrl, getDownloadUrl, ResponseData, ResponseImage } from 'utils'
 import Masonry from 'react-masonry-css'
 import { BiLoaderAlt } from 'react-icons/bi'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 const Home: NextPage = () => {
     const [searchValue, setSearchValue] = useState<string>('')
     const imagePreviewListRef: LegacyRef<HTMLDivElement> = useRef(null)
@@ -19,7 +20,9 @@ const Home: NextPage = () => {
     const [apiPage, setApiPage] = useState<number>(1)
     const [maxApiPage, setMaxApiPage] = useState<number>(1)
     const [scrollY, setScrollY] = useState(0)
+    const router = useRouter()
     useEffect(() => {
+        setSearchValue('')
         updateImageData()
         window.addEventListener('scroll', () => {
             setScrollY(window.scrollY + window.innerHeight)
@@ -67,6 +70,11 @@ const Home: NextPage = () => {
                             e.target.value.trimStart().replace(/ +(?= )/g, '')
                         )
                     }
+                    onKeyUp={(e) => {
+                        if(e.key === 'Enter') {
+                            router.push(`/search/${searchValue}`)
+                        }
+                    }}
                 />
             </Banner>
             <div ref={imagePreviewListRef} className="p-4">

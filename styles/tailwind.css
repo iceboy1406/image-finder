@@ -6,6 +6,7 @@
 @layer base {
     * {
         font-family: 'Nunito', sans-serif;
+        word-break: break-word;
     }
     html {
         overflow-x: hidden;

@@ -32,6 +32,7 @@ const ImagePreview: FC<ImagePreviewProps> = ({
                 blurDataURL={blurSrc}
                 placeholder="blur"
                 alt={alt}
+                quality={100}
             />
             <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent to-black opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex justify-between items-end p-6">
                 <UserPhotoProfile

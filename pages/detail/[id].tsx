@@ -23,8 +23,8 @@ const ImageDetailPage: NextPage = ({
     const router = useRouter()
     return (
         <div className="flex flex-col items-center p-4">
-            <div className="w-full max-w-[1024px] flex flex-col gap-4">
-                <div className="flex gap-2 items-center">
+            <div className="w-full max-w-[1024px] flex flex-col gap-4 items-center">
+                <div className="flex gap-2 items-center w-full">
                     <BsArrowLeft
                         className="text-xl text-gray-700 cursor-pointer"
                         onClick={() => router.back()}
@@ -32,7 +32,7 @@ const ImageDetailPage: NextPage = ({
                     />
                     <p className="text-xl text-gray-700">Image Detail</p>
                 </div>
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center w-full">
                     <UserPhotoProfile
                         src={imageData.userImageURL}
                         userName={imageData.user}
@@ -69,7 +69,7 @@ const ImageDetailPage: NextPage = ({
                     />
                 </div>
 
-                <div className="flex gap-4">
+                <div className="flex gap-4 w-full">
                     <div>
                         <p className="text-sm text-gray-500">Views</p>
                         <p className="text-base text-gray-700">
@@ -83,7 +83,7 @@ const ImageDetailPage: NextPage = ({
                         </p>
                     </div>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-2 w-full">
                     {imageData.tags.split(', ').map((tag) => (
                         <Link href={`/search/${tag}`} key={tag}>
                             <div className="text-white bg-gray-700 hover:bg-gray-800 px-4 py-1.5 rounded-full text-sm cursor-pointer">
