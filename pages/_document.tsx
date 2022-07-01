@@ -6,7 +6,6 @@ const Document = () => {
         <Html lang='en'>
             <Head>
                 <link rel="shortcut icon" href="/images/logo.webp" />
-                <title>Image Finder</title>
             </Head>
             <body>
                 <Main />

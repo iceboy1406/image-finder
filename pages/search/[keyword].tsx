@@ -28,6 +28,7 @@ import FilterHeader from 'components/filter/FilterHeader'
 import FilterModalCard from 'components/filter/FilterModalCard'
 import FilterModalContainer from 'components/filter/FilterModalContainer'
 import ColorFilter from 'components/filter/ColorFilter'
+import Head from 'next/head'
 const SearchResultPage: NextPage = ({
     data,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
@@ -119,6 +120,9 @@ const SearchResultPage: NextPage = ({
     }
     return (
         <div className="flex flex-col h-fit min-h-screen w-full">
+            <Head>
+                <title>Image Finder - Search Results</title>
+            </Head>
             <Header>
                 <NavBrand />
                 <HeaderSearchInput
@@ -152,10 +156,11 @@ const SearchResultPage: NextPage = ({
                                     width="100%"
                                     height="100%"
                                     layout="responsive"
+                                    alt='search result not found illustration'
                                 />
                             </div>
                             <p className="text-gray-600 text-lg text-center">
-                                Sorry we couldn't find any matches for search:
+                                {`Sorry we couldn't find any matches for search:`}
                                 <br />
                                 <b className="text-gray-900 text-2xl">
                                     {keyword}

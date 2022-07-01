@@ -23,6 +23,7 @@ const UserPhotoProfile: FC<UserPhotoProfileProps> = ({
                     width={35}
                     height={35}
                     className="rounded-full"
+                    alt={userName + 'photo profile'}
                 />
             )}
             <p

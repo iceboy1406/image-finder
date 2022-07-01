@@ -11,6 +11,7 @@ import Masonry from 'react-masonry-css'
 import { BiLoaderAlt } from 'react-icons/bi'
 import { useRouter } from 'next/router'
 import InfiniteScroll from 'react-infinite-scroll-component'
+import Head from 'next/head'
 
 const Home: NextPage = ({data}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
     const preloadData:ResponseData = data
@@ -32,6 +33,9 @@ const Home: NextPage = ({data}: InferGetServerSidePropsType<typeof getServerSide
     }
     return (
         <>
+        <Head>
+            <title>Image Finder - Home</title>
+        </Head>
             <Banner>
                 <BannerCaption
                     title="Image Finder"

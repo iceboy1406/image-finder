@@ -1,4 +1,4 @@
-import React, { FC, forwardRef, LegacyRef } from 'react'
+import React, { forwardRef, LegacyRef } from 'react'
 import { FiArrowDown } from 'react-icons/fi'
 interface SimpleDownloadButtonProps {
     fileSrc: string
@@ -20,5 +20,6 @@ const SimpleDownloadButton = forwardRef(
         )
     }
 )
+SimpleDownloadButton.displayName = 'SimpleDownloadButton'
 
 export default SimpleDownloadButton

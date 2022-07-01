@@ -17,6 +17,7 @@ import {
     ResponseData,
     ResponseImage,
 } from 'utils'
+import Head from 'next/head'
 
 const ImageDetailPage: NextPage = ({
     data,
@@ -26,6 +27,9 @@ const ImageDetailPage: NextPage = ({
     const [searchValue, setSearchValue] = useState('')
     return (
         <div className="flex flex-col items-center p-4 pt-0">
+            <Head>
+                <title>Image Finder - Image Detail</title>
+            </Head>
             <div className="w-full max-w-[1024px] flex flex-col gap-4 items-center">
                 <Header>
                     <NavBrand />
