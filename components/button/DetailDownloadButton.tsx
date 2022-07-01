@@ -38,7 +38,7 @@ const DetailDownloadButton: FC<DetailDownloadButtonProps> = ({
         })
     }, [])
     return (
-        <div className="flex group h-9 relative bg-white shadow-2xl">
+        <div className="flex group h-9 relative bg-white shadow-2xl min-w-[130px]">
             <a
                 title="Download Image"
                 download
