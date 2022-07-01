@@ -37,3 +37,8 @@
         margin-bottom: 16px;
     }
 }
+@layer utilities {
+    .shadow-header {
+        box-shadow: 0px 30px 60px rgb(0 0 0 / 5%);
+    }
+}

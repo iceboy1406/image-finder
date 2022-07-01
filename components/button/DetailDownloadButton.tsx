@@ -60,7 +60,7 @@ const DetailDownloadButton: FC<DetailDownloadButtonProps> = ({
             </button>
             {cardVisibility ? (
                 <div
-                    className={`bg-gray-900 absolute right-0 -bottom-[164px] w-max rounded-md overflow-hidden py-2 select-none z-10`}
+                    className={`bg-gray-900 absolute right-0 -bottom-[164px] w-max rounded-md overflow-hidden py-2 select-none z-30`}
                     id="resolution-card"
                 >
                     <a

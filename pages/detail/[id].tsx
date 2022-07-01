@@ -1,12 +1,14 @@
 import axios, { AxiosError } from 'axios'
 import DetailDownloadButton from 'components/button/DetailDownloadButton'
+import Header from 'components/header/Header'
+import HeaderSearchInput from 'components/input/HeaderSearchInput'
+import NavBrand from 'components/header/NavBrand'
 import ImagePreviewDetail from 'components/image/ImagePreviewDetail'
 import UserPhotoProfile from 'components/image/UserPhotoProfile'
 import { GetServerSideProps, InferGetServerSidePropsType, NextPage } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import React from 'react'
-import { BsArrowLeft } from 'react-icons/bs'
+import React, { useState } from 'react'
 import {
     apiBaseUrl,
     getCompressedImageExtension,
@@ -21,17 +23,28 @@ const ImageDetailPage: NextPage = ({
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
     const imageData: ResponseImage = data
     const router = useRouter()
+    const [searchValue, setSearchValue] = useState('')
     return (
-        <div className="flex flex-col items-center p-4">
+        <div className="flex flex-col items-center p-4 pt-0">
             <div className="w-full max-w-[1024px] flex flex-col gap-4 items-center">
-                <div className="flex gap-2 items-center w-full">
-                    <BsArrowLeft
-                        className="text-xl text-gray-700 cursor-pointer"
-                        onClick={() => router.back()}
-                        title="Back"
+                <Header>
+                    <NavBrand />
+                    <HeaderSearchInput
+                        value={searchValue}
+                        onChange={(e) =>
+                            setSearchValue(
+                                e.target.value
+                                    .trimStart()
+                                    .replace(/ +(?= )/g, '')
+                            )
+                        }
+                        onKeyUp={(e) => {
+                            if (e.key === 'Enter') {
+                                router.push(`/search/${searchValue.trim()}`)
+                            }
+                        }}
                     />
-                    <p className="text-xl text-gray-700">Image Detail</p>
-                </div>
+                </Header>
                 <div className="flex justify-between items-center w-full">
                     <UserPhotoProfile
                         src={imageData.userImageURL}

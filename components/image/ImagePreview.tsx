@@ -1,7 +1,7 @@
 import SimpleDownloadButton from 'components/button/SimpleDownloadButton'
 import Image from 'next/image'
-import React, { FC } from 'react'
-import { FiArrowDown } from 'react-icons/fi'
+import { useRouter } from 'next/router'
+import React, { FC, LegacyRef, useRef } from 'react'
 import UserPhotoProfile from './UserPhotoProfile'
 interface ImagePreviewProps {
     src: string
@@ -11,6 +11,7 @@ interface ImagePreviewProps {
     userImageUrl: string
     originalImageUrl: string
     alt: string
+    id: number
 }
 const ImagePreview: FC<ImagePreviewProps> = ({
     src,
@@ -20,9 +21,23 @@ const ImagePreview: FC<ImagePreviewProps> = ({
     userImageUrl,
     userName,
     alt,
+    id,
 }) => {
+    const router = useRouter()
+    const downloadButtonRef: LegacyRef<HTMLAnchorElement> = useRef(null)
     return (
-        <li className="w-full h-fit relative inline-block group cursor-zoom-in mb-4">
+        <li
+            className="w-full h-fit relative inline-block group cursor-zoom-in mb-4"
+            onClick={(e) => {
+                const target = e.target as Node
+                if (
+                    target !== downloadButtonRef.current &&
+                    !downloadButtonRef.current?.contains(target)
+                ) {
+                    router.push(`/detail/${id}`)
+                }
+            }}
+        >
             <Image
                 src={src}
                 width="100%"
@@ -40,7 +55,10 @@ const ImagePreview: FC<ImagePreviewProps> = ({
                     userName={userName}
                     variant={'light'}
                 />
-                <SimpleDownloadButton fileSrc={originalImageUrl} />
+                <SimpleDownloadButton
+                    ref={downloadButtonRef}
+                    fileSrc={originalImageUrl}
+                />
             </div>
         </li>
     )

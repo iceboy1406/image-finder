@@ -17,7 +17,7 @@ const BannerSearchInput: FC<BannerSearchInputProps> = ({
             <FiSearch className="text-lg text-gray-700" />
             <input
                 type="search"
-                className="flex-grow text-base text-gray-700 placeholder:text-gray-600"
+                className="flex-grow text-base text-gray-700 placeholder:text-gray-600 bg-transparent"
                 placeholder="Search Image"
                 onChange={onChange}
                 onKeyUp={onKeyUp}
