@@ -50,9 +50,7 @@ function getOriginalImageExtension(image: ResponseImage) {
 function getDownloadUrl(image: ResponseImage) {
     const firstTag = image.tags.split(',')[0].trim().replace(' ', '-')
     return {
-        small: `https://pixabay.com/images/download/${firstTag}-${
-            image.id
-        }_640.${getCompressedImageExtension(image)}?attachment`,
+        small: `https://pixabay.com/images/download/${firstTag}-${image.id}_640.${getCompressedImageExtension(image)}?attachment`,
         medium: `https://pixabay.com/images/download/${firstTag}-${
             image.id
         }_1280.${getCompressedImageExtension(image)}?attachment`,
