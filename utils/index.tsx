@@ -44,7 +44,6 @@ function getOriginalImageExtension(image: ResponseImage) {
         default:
             console.log(`invalid type : `, image)
             return 'jpg'
-        // throw Error('invalid type')
     }
 }
 function getDownloadUrl(image: ResponseImage) {
