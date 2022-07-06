@@ -62,23 +62,6 @@ function getDownloadUrl(image: ResponseImage) {
         }.${getOriginalImageExtension(image)}?attachment`,
     }
 }
-function getPreviewUrl(image: ResponseImage) {
-    const firstTag = image.tags.split(',')[0].trim().replace(' ', '-')
-    return {
-        small: `https://pixabay.com/images/download/${firstTag}-${
-            image.id
-        }_640.${getCompressedImageExtension(image)}`,
-        medium: `https://pixabay.com/images/download/${firstTag}-${
-            image.id
-        }_1280.${getCompressedImageExtension(image)}`,
-        large: `https://pixabay.com/images/download/${firstTag}-${
-            image.id
-        }_1920.${getCompressedImageExtension(image)}`,
-        original: `https://pixabay.com/images/download/${firstTag}-${
-            image.id
-        }.${getOriginalImageExtension(image)}`,
-    }
-}
 const getResolutions = (originalWidth: number, originalHeight: number) => {
     if (originalWidth > originalHeight) {
         return {
@@ -104,7 +87,6 @@ export type { ResponseImage, ResponseData }
 export {
     getCompressedImageExtension,
     getDownloadUrl,
-    getPreviewUrl,
     getOriginalImageExtension,
     apiBaseUrl,
     getResolutions
