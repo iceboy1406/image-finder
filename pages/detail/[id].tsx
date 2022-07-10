@@ -14,15 +14,14 @@ import {
     getCompressedImageExtension,
     getDownloadUrl,
     getOriginalImageExtension,
-    ResponseData,
-    ResponseImage,
 } from 'utils'
 import Head from 'next/head'
+import { ImageData, ResponseData } from 'types'
 
 const ImageDetailPage: NextPage = ({
     data,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-    const imageData: ResponseImage = data
+    const imageData: ImageData = data
     const router = useRouter()
     const [searchValue, setSearchValue] = useState('')
     return (
