@@ -1,41 +1,36 @@
-import axios, { AxiosError } from 'axios'
 import Banner from 'components/banner/Banner'
 import BannerCaption from 'components/banner/BannerCaption'
 import BannerSearchInput from 'components/input/BannerSearchInput'
 import ImagePreview from 'components/image/ImagePreview'
-import type { GetServerSideProps, InferGetServerSidePropsType, NextPage } from 'next'
+import type { NextPage } from 'next'
 import { useEffect } from 'react'
 import { useState } from 'react'
-import { apiBaseUrl, getDownloadUrl, ResponseData, ResponseImage } from 'utils'
+import { getDownloadUrl } from 'utils'
 import Masonry from 'react-masonry-css'
 import { BiLoaderAlt } from 'react-icons/bi'
 import { useRouter } from 'next/router'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import Head from 'next/head'
+import { useSelector } from 'react-redux'
+import { RootState, useAppDispatch } from 'store'
+import { fetchImages } from 'store/slices/images'
 
-const Home: NextPage = ({data}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-    const preloadData:ResponseData = data
+const Home: NextPage = () => {
     const [searchValue, setSearchValue] = useState<string>('')
-    const [images, setImages] = useState<ResponseImage[]>(preloadData.hits)
-    const [apiPage, setApiPage] = useState<number>(2)
-    const maxApiPage = Math.ceil(preloadData.totalHits / 20)
     const router = useRouter()
+    const { images, maxPage, page } = useSelector(
+        (state: RootState) => state.images
+    )
+    const dispatch = useAppDispatch()
     useEffect(() => {
         setSearchValue('')
+        dispatch(fetchImages())
     }, [])
-    async function updateImageData() {
-        const response = await axios.get(
-            `${apiBaseUrl}&page=${apiPage}&safesearch=true`
-        )
-        const data: ResponseData = response.data
-        setImages([...images, ...data.hits])
-        setApiPage(apiPage + 1)
-    }
     return (
         <>
-        <Head>
-            <title>Image Finder - Home</title>
-        </Head>
+            <Head>
+                <title>Image Finder - Home</title>
+            </Head>
             <Banner>
                 <BannerCaption
                     title="Image Finder"
@@ -59,8 +54,8 @@ const Home: NextPage = ({data}: InferGetServerSidePropsType<typeof getServerSide
                 style={{ overflow: 'hidden' }}
                 className="p-4"
                 dataLength={images.length}
-                next={updateImageData}
-                hasMore={apiPage <= maxApiPage}
+                next={() => dispatch(fetchImages())}
+                hasMore={page <= maxPage}
                 loader={
                     <div className="w-full p-7 flex justify-center animate-spin">
                         <BiLoaderAlt className="text-5xl text-gray-700" />
@@ -92,24 +87,5 @@ const Home: NextPage = ({data}: InferGetServerSidePropsType<typeof getServerSide
         </>
     )
 }
-export const getServerSideProps: GetServerSideProps = async () => {
-    let returnData: ResponseData = { hits: [], total: 0, totalHits: 0 }
-    try {
-        const response = await axios.get(
-            `${apiBaseUrl}&safesearch=true`
-        )
-        returnData = response.data
-    } catch (error) {
-        if (error instanceof AxiosError) {
-            if (error.response?.status === 400) {
-                return {
-                    notFound: true,
-                }
-            }
-        }
-    }
-    return {
-        props: { data: returnData },
-    }
-}
+
 export default Home

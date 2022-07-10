@@ -1,37 +1,9 @@
-interface ResponseData {
-    total: number
-    totalHits: number
-    hits: ResponseImage[]
-}
-interface ResponseImage {
-    id: number
-    pageURL: string
-    type: string
-    tags: string
-    previewURL: string
-    previewWidth: number
-    previewHeight: number
-    webformatURL: string
-    webformatWidth: number
-    webformatHeight: number
-    largeImageURL: string
-    fullHDURL: string
-    imageURL: string
-    imageWidth: number
-    imageHeight: number
-    imageSize: number
-    views: number
-    downloads: number
-    likes: number
-    comments: number
-    user_id: number
-    user: string
-    userImageURL: string
-}
-function getCompressedImageExtension(image: ResponseImage) {
+import { ImageData } from "types"
+
+function getCompressedImageExtension(image: ImageData) {
     return image.previewURL.split('.')[image.previewURL.split('.').length - 1]
 }
-function getOriginalImageExtension(image: ResponseImage) {
+function getOriginalImageExtension(image: ImageData) {
     switch (image.type) {
         case 'photo':
             return getCompressedImageExtension(image)
@@ -46,10 +18,12 @@ function getOriginalImageExtension(image: ResponseImage) {
             return 'jpg'
     }
 }
-function getDownloadUrl(image: ResponseImage) {
+function getDownloadUrl(image: ImageData) {
     const firstTag = image.tags.split(',')[0].trim().replace(' ', '-')
     return {
-        small: `https://pixabay.com/images/download/${firstTag}-${image.id}_640.${getCompressedImageExtension(image)}?attachment`,
+        small: `https://pixabay.com/images/download/${firstTag}-${
+            image.id
+        }_640.${getCompressedImageExtension(image)}?attachment`,
         medium: `https://pixabay.com/images/download/${firstTag}-${
             image.id
         }_1280.${getCompressedImageExtension(image)}?attachment`,
@@ -82,11 +56,10 @@ const getResolutions = (originalWidth: number, originalHeight: number) => {
     }
 }
 const apiBaseUrl = `https://pixabay.com/api/?key=27699215-ecac0a076f968a0144f33abee`
-export type { ResponseImage, ResponseData }
 export {
     getCompressedImageExtension,
     getDownloadUrl,
     getOriginalImageExtension,
     apiBaseUrl,
-    getResolutions
+    getResolutions,
 }

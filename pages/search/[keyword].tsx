@@ -1,12 +1,7 @@
-import axios, { AxiosError } from 'axios'
 import ImagePreview from 'components/image/ImagePreview'
-import type {
-    GetServerSideProps,
-    InferGetServerSidePropsType,
-    NextPage,
-} from 'next'
+import type { NextPage } from 'next'
 import { useEffect, useState } from 'react'
-import { apiBaseUrl, getDownloadUrl, ResponseData, ResponseImage } from 'utils'
+import { getDownloadUrl } from 'utils'
 import Masonry from 'react-masonry-css'
 import { useRouter } from 'next/router'
 import NavBrand from 'components/header/NavBrand'
@@ -29,44 +24,19 @@ import FilterModalCard from 'components/filter/FilterModalCard'
 import FilterModalContainer from 'components/filter/FilterModalContainer'
 import ColorFilter from 'components/filter/ColorFilter'
 import Head from 'next/head'
-const SearchResultPage: NextPage = ({
-    data,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-    const preloadData: ResponseData = data
-    const [images, setImages] = useState<ResponseImage[]>(preloadData.hits)
-    const [apiPage, setApiPage] = useState<number>(2)
-    const [maxApiPage, setMaxApiPage] = useState<number>(
-        Math.ceil(preloadData.totalHits / 20)
-    )
+import { Filters } from 'types'
+import { RootState, useAppDispatch } from 'store'
+import { useSelector } from 'react-redux'
+import { fetchImages, resetImageData } from 'store/slices/images'
+const SearchResultPage: NextPage = () => {
     const router = useRouter()
     const { keyword } = router.query
     const [searchValue, setSearchValue] = useState<string>(`${keyword}`)
     const [filterModalVisibility, setFilterModalVisibility] = useState(false)
-    // filter
-    interface Filters {
-        sortBy: 'popular' | 'latest'
-        orientation: '' | 'horizontal' | 'vertical'
-        imageType: 'all' | 'photo' | 'vector' | 'illustration'
-        category: string
-        minimumWidth: string
-        minimumHeight: string
-        colors:
-            | ''
-            | 'grayscale'
-            | 'transparent'
-            | 'red'
-            | 'orange'
-            | 'yellow'
-            | 'green'
-            | 'turquoise'
-            | 'blue'
-            | 'lilac'
-            | 'pink'
-            | 'white'
-            | 'gray'
-            | 'black'
-            | 'brown'
-    }
+    const { images, maxPage, page, loading } = useSelector(
+        (state: RootState) => state.images
+    )
+    const dispatch = useAppDispatch()
     const defaultFilters: Filters = {
         sortBy: 'popular',
         orientation: '',
@@ -76,36 +46,16 @@ const SearchResultPage: NextPage = ({
         minimumHeight: '0',
         colors: '',
     }
+
     const [filters, setFilters] = useState<Filters>(defaultFilters)
     const [minimumWidth, setMinimumWidth] = useState<string>('0')
     const [minimumHeight, setMinimumHeight] = useState<string>('0')
     useEffect(() => {
-        ;(async () => {
-            await updateImageData(true)
-        })()
-    }, [filters])
-    async function updateImageData(reset: boolean = false) {
-        const response = await axios.get(
-            `${apiBaseUrl}&page=${
-                reset ? 1 : apiPage
-            }&q=${keyword}&safesearch=true&order=${
-                filters.sortBy
-            }&orientation=${filters.orientation}&image_type=${
-                filters.imageType
-            }&category=${filters.category}&min_width=${
-                filters.minimumWidth
-            }&min_height=${filters.minimumHeight}&colors=${filters.colors}`
-        )
-        const data: ResponseData = response.data
-        if (reset) {
-            setImages([...data.hits])
-            setApiPage(1 + 1)
-        } else {
-            setImages([...images, ...data.hits])
-            setApiPage(apiPage + 1)
+        if (keyword) {
+            dispatch(resetImageData())
+            dispatch(fetchImages({ keyword: `${keyword}`, filters: filters }))
         }
-        setMaxApiPage(Math.ceil(data.totalHits / 20))
-    }
+    }, [filters])
     const showFilterModal = () => {
         setFilterModalVisibility(true)
         if (document.body) {
@@ -121,7 +71,7 @@ const SearchResultPage: NextPage = ({
     return (
         <div className="flex flex-col h-fit min-h-screen w-full">
             <Head>
-                <title>Image Finder - Search Results</title>
+                <title>Image Finder - Search Results for {keyword}</title>
             </Head>
             <Header>
                 <NavBrand />
@@ -146,7 +96,7 @@ const SearchResultPage: NextPage = ({
                     onClick={() => showFilterModal()}
                 />
             </Header>
-            {images.length === 0 ? (
+            {images.length === 0 && !loading ? (
                 <>
                     <div className="flex items-center justify-center flex-grow">
                         <div className="flex flex-col gap-4 items-center">
@@ -156,7 +106,7 @@ const SearchResultPage: NextPage = ({
                                     width="100%"
                                     height="100%"
                                     layout="responsive"
-                                    alt='search result not found illustration'
+                                    alt="search result not found illustration"
                                 />
                             </div>
                             <p className="text-gray-600 text-lg text-center">
@@ -175,8 +125,8 @@ const SearchResultPage: NextPage = ({
                         style={{ overflow: 'hidden' }}
                         className="p-4"
                         dataLength={images.length}
-                        next={updateImageData}
-                        hasMore={apiPage <= maxApiPage}
+                        next={() => dispatch(fetchImages())}
+                        hasMore={page <= maxPage}
                         loader={
                             <div className="w-full p-7 flex justify-center animate-spin">
                                 <BiLoaderAlt className="text-5xl text-gray-700" />
@@ -235,7 +185,9 @@ const SearchResultPage: NextPage = ({
                                 <FilterListItemBody>
                                     <BasicFilter
                                         value={'Popular'}
-                                        isSelected={filters.sortBy === 'popular'}
+                                        isSelected={
+                                            filters.sortBy === 'popular'
+                                        }
                                         onClick={() =>
                                             setFilters({
                                                 ...filters,
@@ -316,7 +268,9 @@ const SearchResultPage: NextPage = ({
                                     />
                                     <BasicFilter
                                         value={'Photo'}
-                                        isSelected={filters.imageType === 'photo'}
+                                        isSelected={
+                                            filters.imageType === 'photo'
+                                        }
                                         onClick={() =>
                                             setFilters({
                                                 ...filters,
@@ -392,18 +346,128 @@ const SearchResultPage: NextPage = ({
                                     />
                                 </FilterListItemBody>
                                 <FilterListItemBody>
-                                    <ColorFilter selected={filters.colors === 'red'} onClick={() => setFilters({...filters, colors: 'red'})} color='red' />
-                                    <ColorFilter selected={filters.colors === 'orange'} onClick={() => setFilters({...filters, colors: 'orange'})} color='orange' />
-                                    <ColorFilter selected={filters.colors === 'yellow'} onClick={() => setFilters({...filters, colors: 'yellow'})} color='yellow' />
-                                    <ColorFilter selected={filters.colors === 'green'} onClick={() => setFilters({...filters, colors: 'green'})} color='green' />
-                                    <ColorFilter selected={filters.colors === 'turquoise'} onClick={() => setFilters({...filters, colors: 'turquoise'})} color='turquoise' />
-                                    <ColorFilter selected={filters.colors === 'blue'} onClick={() => setFilters({...filters, colors: 'blue'})} color='blue' />
-                                    <ColorFilter selected={filters.colors === 'lilac'} onClick={() => setFilters({...filters, colors: 'lilac'})} color='lilac' />
-                                    <ColorFilter selected={filters.colors === 'pink'} onClick={() => setFilters({...filters, colors: 'pink'})} color='pink' />
-                                    <ColorFilter selected={filters.colors === 'white'} onClick={() => setFilters({...filters, colors: 'white'})} color='white' />
-                                    <ColorFilter selected={filters.colors === 'gray'} onClick={() => setFilters({...filters, colors: 'gray'})} color='gray' />
-                                    <ColorFilter selected={filters.colors === 'black'} onClick={() => setFilters({...filters, colors: 'black'})} color='black' />
-                                    <ColorFilter selected={filters.colors === 'brown'} onClick={() => setFilters({...filters, colors: 'brown'})} color='brown' />
+                                    <ColorFilter
+                                        selected={filters.colors === 'red'}
+                                        onClick={() =>
+                                            setFilters({
+                                                ...filters,
+                                                colors: 'red',
+                                            })
+                                        }
+                                        color="red"
+                                    />
+                                    <ColorFilter
+                                        selected={filters.colors === 'orange'}
+                                        onClick={() =>
+                                            setFilters({
+                                                ...filters,
+                                                colors: 'orange',
+                                            })
+                                        }
+                                        color="orange"
+                                    />
+                                    <ColorFilter
+                                        selected={filters.colors === 'yellow'}
+                                        onClick={() =>
+                                            setFilters({
+                                                ...filters,
+                                                colors: 'yellow',
+                                            })
+                                        }
+                                        color="yellow"
+                                    />
+                                    <ColorFilter
+                                        selected={filters.colors === 'green'}
+                                        onClick={() =>
+                                            setFilters({
+                                                ...filters,
+                                                colors: 'green',
+                                            })
+                                        }
+                                        color="green"
+                                    />
+                                    <ColorFilter
+                                        selected={
+                                            filters.colors === 'turquoise'
+                                        }
+                                        onClick={() =>
+                                            setFilters({
+                                                ...filters,
+                                                colors: 'turquoise',
+                                            })
+                                        }
+                                        color="turquoise"
+                                    />
+                                    <ColorFilter
+                                        selected={filters.colors === 'blue'}
+                                        onClick={() =>
+                                            setFilters({
+                                                ...filters,
+                                                colors: 'blue',
+                                            })
+                                        }
+                                        color="blue"
+                                    />
+                                    <ColorFilter
+                                        selected={filters.colors === 'lilac'}
+                                        onClick={() =>
+                                            setFilters({
+                                                ...filters,
+                                                colors: 'lilac',
+                                            })
+                                        }
+                                        color="lilac"
+                                    />
+                                    <ColorFilter
+                                        selected={filters.colors === 'pink'}
+                                        onClick={() =>
+                                            setFilters({
+                                                ...filters,
+                                                colors: 'pink',
+                                            })
+                                        }
+                                        color="pink"
+                                    />
+                                    <ColorFilter
+                                        selected={filters.colors === 'white'}
+                                        onClick={() =>
+                                            setFilters({
+                                                ...filters,
+                                                colors: 'white',
+                                            })
+                                        }
+                                        color="white"
+                                    />
+                                    <ColorFilter
+                                        selected={filters.colors === 'gray'}
+                                        onClick={() =>
+                                            setFilters({
+                                                ...filters,
+                                                colors: 'gray',
+                                            })
+                                        }
+                                        color="gray"
+                                    />
+                                    <ColorFilter
+                                        selected={filters.colors === 'black'}
+                                        onClick={() =>
+                                            setFilters({
+                                                ...filters,
+                                                colors: 'black',
+                                            })
+                                        }
+                                        color="black"
+                                    />
+                                    <ColorFilter
+                                        selected={filters.colors === 'brown'}
+                                        onClick={() =>
+                                            setFilters({
+                                                ...filters,
+                                                colors: 'brown',
+                                            })
+                                        }
+                                        color="brown"
+                                    />
                                 </FilterListItemBody>
                             </FilterListItem>
                             <FilterListItem>
@@ -545,7 +609,9 @@ const SearchResultPage: NextPage = ({
                                                 item.charAt(0).toUpperCase() +
                                                 item.slice(1)
                                             }
-                                            isSelected={filters.category === item}
+                                            isSelected={
+                                                filters.category === item
+                                            }
                                             onClick={() =>
                                                 setFilters({
                                                     ...filters,
@@ -564,26 +630,6 @@ const SearchResultPage: NextPage = ({
             )}
         </div>
     )
-}
-export const getServerSideProps: GetServerSideProps = async (context) => {
-    let returnData: ResponseData = { hits: [], total: 0, totalHits: 0 }
-    try {
-        const response = await axios.get(
-            `${apiBaseUrl}&q=${context.params?.keyword}&safesearch=true`
-        )
-        returnData = response.data
-    } catch (error) {
-        if (error instanceof AxiosError) {
-            if (error.response?.status === 400) {
-                return {
-                    notFound: true,
-                }
-            }
-        }
-    }
-    return {
-        props: { data: returnData },
-    }
 }
 
 export default SearchResultPage
