@@ -4,9 +4,10 @@ import React from 'react'
 const NavBrand = () => {
     return (
         <Link href={'/'}>
-            <div className='h-[45px]'>
+            <div className="h-[45px]">
                 <Image
-                    src='/images/logo.webp'
+                    unoptimized={true}
+                    src="/images/logo.webp"
                     width={45}
                     height={45}
                     alt="camera"

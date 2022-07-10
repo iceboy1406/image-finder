@@ -39,6 +39,7 @@ const ImagePreview: FC<ImagePreviewProps> = ({
             }}
         >
             <Image
+                unoptimized={true}
                 src={src}
                 width="100%"
                 height={`${heightPerWidth * 100}%`}

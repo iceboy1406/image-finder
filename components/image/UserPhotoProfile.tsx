@@ -19,6 +19,7 @@ const UserPhotoProfile: FC<UserPhotoProfileProps> = ({
                 </div>
             ) : (
                 <Image
+                unoptimized={true}
                     src={src}
                     width={35}
                     height={35}

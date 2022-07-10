@@ -23,6 +23,7 @@ const ImagePreviewDetail: FC<ImagePreviewDetailProps> = ({
     }, [])
     return (
         <Image
+            unoptimized={true}
             src={src}
             alt={alt}
             width={

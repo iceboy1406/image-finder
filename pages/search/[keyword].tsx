@@ -102,6 +102,7 @@ const SearchResultPage: NextPage = () => {
                         <div className="flex flex-col gap-4 items-center">
                             <div className="w-full max-w-[300px]">
                                 <Image
+                                    unoptimized={true}
                                     src={'/images/search-not-found.webp'}
                                     width="100%"
                                     height="100%"
