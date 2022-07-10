@@ -134,7 +134,7 @@ const SearchResultPage: NextPage = () => {
                                 })
                             )
                         }
-                        hasMore={page <= maxPage}
+                        hasMore={page < maxPage}
                         loader={
                             <div className="w-full p-7 flex justify-center animate-spin">
                                 <BiLoaderAlt className="text-5xl text-gray-700" />
