@@ -126,7 +126,14 @@ const SearchResultPage: NextPage = () => {
                         style={{ overflow: 'hidden' }}
                         className="p-4"
                         dataLength={images.length}
-                        next={() => dispatch(fetchImages())}
+                        next={() =>
+                            dispatch(
+                                fetchImages({
+                                    keyword: `${keyword}`,
+                                    filters: filters,
+                                })
+                            )
+                        }
                         hasMore={page <= maxPage}
                         loader={
                             <div className="w-full p-7 flex justify-center animate-spin">
