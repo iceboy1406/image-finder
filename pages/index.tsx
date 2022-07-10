@@ -13,7 +13,7 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 import Head from 'next/head'
 import { useSelector } from 'react-redux'
 import { RootState, useAppDispatch } from 'store'
-import { fetchImages } from 'store/slices/images'
+import { fetchImages, resetImageData } from 'store/slices/images'
 
 const Home: NextPage = () => {
     const [searchValue, setSearchValue] = useState<string>('')
@@ -24,6 +24,7 @@ const Home: NextPage = () => {
     const dispatch = useAppDispatch()
     useEffect(() => {
         setSearchValue('')
+        dispatch(resetImageData())
         dispatch(fetchImages())
     }, [])
     return (
