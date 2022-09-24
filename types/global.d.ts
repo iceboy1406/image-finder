@@ -1,4 +1,4 @@
-interface ImageData {
+declare interface ImageData {
     id: number
     pageURL: string
     type: string
@@ -23,12 +23,12 @@ interface ImageData {
     user: string
     userImageURL: string
 }
-interface ResponseData {
+declare interface ResponseData {
     total: number
     totalHits: number
     hits: ImageData[]
 }
-interface Filters {
+declare interface Filters {
     sortBy: string
     orientation: string
     imageType: string
@@ -37,4 +37,3 @@ interface Filters {
     minimumHeight: string
     colors: string
 }
-export type { ImageData, ResponseData, Filters }

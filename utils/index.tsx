@@ -1,5 +1,3 @@
-import { ImageData } from "types"
-
 function getCompressedImageExtension(image: ImageData) {
     return image.previewURL.split('.')[image.previewURL.split('.').length - 1]
 }
